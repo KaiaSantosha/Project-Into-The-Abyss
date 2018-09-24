@@ -20,6 +20,8 @@ public class Player_Movement : MonoBehaviour {
 
     private Animator myAnimator;
 
+    private SpriteRenderer mySpriteRendeer;
+
 
     private float h;
     private bool isClimbing;
@@ -30,6 +32,7 @@ public class Player_Movement : MonoBehaviour {
 	void Start () {
         myAnimator = gameObject.GetComponent<Animator>();
         myRigidbody2D = gameObject.GetComponent<Rigidbody2D>();
+        mySpriteRendeer = gameObject.GetComponent<SpriteRenderer>();
         myRigidbody2D.gravityScale = 1;
         myRigidbody2D.angularDrag = 0;
         isClimbing = false;
@@ -37,6 +40,7 @@ public class Player_Movement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
         Move();
         if (Physics2D.Raycast(GroundCheck.transform.position, Vector2.down, 0.01f, Ground))
         {
@@ -44,6 +48,11 @@ public class Player_Movement : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.E))
             {
                 InteractOBJ();
+            }
+
+            if(Input.GetKeyDown(KeyCode.LeftControl))
+            {
+                Stealth();
             }
 
             if (Input.GetKeyDown(KeyCode.Space))
@@ -58,6 +67,14 @@ public class Player_Movement : MonoBehaviour {
             myAnimator.SetBool("isGrounded", false);
             myAnimator.SetBool("canJump", false);
         }
+    }
+
+    void Stealth()
+    {
+        if (mySpriteRendeer.sortingOrder == 1)
+            mySpriteRendeer.sortingOrder = -1;
+        else if (mySpriteRendeer.sortingOrder == -1)
+            mySpriteRendeer.sortingOrder = 1;
     }
 
     void InteractOBJ()
