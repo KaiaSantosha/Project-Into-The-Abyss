@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player_Health : MonoBehaviour {
 
@@ -16,11 +17,21 @@ public class Player_Health : MonoBehaviour {
     [SerializeField] private float restTimer = 15;
     private float curTime;
 
+    public Slider healthSlider;
+    public Slider restSlider;
+    public Slider hungerSlider;
+
+    private Animator myAnimator;
+
+    public int curFood = 1;
+
     // Use this for initialization
     void Start () {
         curHunger = maxHunger;
         curRest = maxRest;
         curHealth = maxHealth;
+
+        myAnimator = gameObject.GetComponent<Animator>();
 	}
 	
 	// Update is called once per frame
@@ -38,6 +49,28 @@ public class Player_Health : MonoBehaviour {
         curRest = Mathf.Clamp(curRest, 0, maxRest);
        // Debug.Log(curRest);
         Debug.Log(curHunger);
+
+        if (curHealth <= 0 || curHunger <= 0 || curRest <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void OnGUI()
+    {
+        healthSlider.value = curHealth;
+        hungerSlider.value = curHunger;
+        restSlider.value = curRest;
+    }
+
+    void Die()
+    {
+        myAnimator.SetTrigger("Death");
+    }
+
+    public void Despawn()
+    {
+        Destroy(gameObject);
     }
 
     void LoseHealth()
@@ -55,20 +88,37 @@ public class Player_Health : MonoBehaviour {
         curRest -= 1;
     }
 
-    public void Rest()
+    public void ToggleRest()
     {
-        Debug.Log("REST");
-        if(curRest < maxRest)
+        if (myAnimator.GetBool("isResting") == false)
         {
-            curRest = maxRest;
-            LoseHunger();
-            curTime = 0;
+            myAnimator.SetBool("isResting", true);
+            Debug.Log("REST");
+            if (curRest < maxRest)
+            {
+                curRest = maxRest;
+                LoseHunger();
+                curTime = 0;
+            }
         }
+        else if (myAnimator.GetBool("isResting") == true)
+            myAnimator.SetBool("isResting", false);
+
+
+    }
+
+    public void StopRest()
+    {
 
     }
 
     public void Eat()
     {
-        curHunger = maxHunger;
+        myAnimator.SetTrigger("Eat");
+        if(curFood > 0)
+        {
+            curFood--;
+            curHunger = maxHunger;
+        }
     }
 }

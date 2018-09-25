@@ -47,7 +47,7 @@ public class Player_Movement : MonoBehaviour {
             myAnimator.SetBool("isGrounded", true);
             if (Input.GetKeyDown(KeyCode.E))
             {
-                InteractOBJ();
+                myAnimator.SetTrigger("Pickup");
             }
 
             if(Input.GetKeyDown(KeyCode.LeftControl))
@@ -77,12 +77,13 @@ public class Player_Movement : MonoBehaviour {
             mySpriteRendeer.sortingOrder = 1;
     }
 
-    void InteractOBJ()
+    public void InteractOBJ()
     {
         if (Physics2D.Raycast(InteractCheck.transform.position, direction, 1.0f, InteractablesLayer).collider != null)
         {
             GameObject InteractedOBJ = Physics2D.Raycast(InteractCheck.transform.position,direction, 1.0f, InteractablesLayer).collider.gameObject;
             InteractedOBJ.SetActive(false);
+            gameObject.GetComponent<Attack_Script>().ammoCount++;
         }
            
         //var DetectedCols = Physics2D.RaycastAll(InteractCheck.transform.position, Vector2.right, 1.0f, InteractablesLayer);
